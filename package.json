@@ -1,5 +1,5 @@
 {
-  "name": "task-logger-api",
+  "name": "event-task-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

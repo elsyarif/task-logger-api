@@ -3,10 +3,12 @@ import http from "http";
 import * as socket from "socket.io";
 import dotenv from "dotenv";
 import cors from "cors";
+import connectDB from "./config/database.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 dotenv.config();
+connectDB();
 
 const server = http.createServer(app);
 const io = new socket.Server(server, {
