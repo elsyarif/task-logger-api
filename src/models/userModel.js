@@ -25,6 +25,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    groupId : {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Groups"
+  }
   },
   {
     timestamps: true,
