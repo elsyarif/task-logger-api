@@ -79,7 +79,7 @@ export const userAuth = asyncHandler(async(req, res) => {
 
 export const userEdit = asyncHandler(async(req, res) => {
     try {
-        
+        const id = req.user._id
     } catch (error) {
         throw new Error(error.message);
     }

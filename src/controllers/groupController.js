@@ -93,7 +93,8 @@ export const deleteGroup = asyncHandler(async (req, res) => {
     if (!group) {
       throw new Error("group not found");
     }else{
-		const remove = await Groups.delete(id)
+      
+		const remove = await Groups.deleteOne(id)
 		
 		res.json({
 			message: "Groups delete successfully",

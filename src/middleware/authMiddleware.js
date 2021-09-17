@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken'
 import asyncHandler from 'express-async-handler'
 import Users from '../models/userModel.js'
-import Roles from '../models/roleModel.js'
-import PermissionModel from '../models/permissionModel.js'
 
 export const protect = asyncHandler(async(req, res, next) =>{
     let token
@@ -12,30 +10,15 @@ export const protect = asyncHandler(async(req, res, next) =>{
 
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             const user = await Users.findById(decoded.id).select('-password')
-            const getRole = await Roles.findById({_id :user.roles})
-            let permission = []
-
-            for (let i = 0; i < getRole.permissions.length; i++) {
-                permission.push(getRole.permissions[i].name)
-            }
              
             req.user = {
                 _id : user._id,
                 name : user.name,
                 username : user.username,
-                avatar: user.avatar,
-                roles : {
-                    _id : getRole._id,
-                    name : getRole.name,
-                    permissions : permission
-                },
+                groupId: user.groupId,
                 status : user.status
             }
-            
-            req.outlet = {
-                _id : user.outlet
-            }
-            
+                        
             next()
         } catch (error) {
             res.status(401)
@@ -115,36 +98,3 @@ export const protect = asyncHandler(async(req, res, next) =>{
         throw new Error("You don't have role")
     }
  })
-
-//  export const permit_old = asyncHandler(async(req, res, next) => {
-//     const permission = req.user.roles.permissions
-
-//     for (let i = 0; i < permission.length; i++) {
-//         switch (req.method) {
-//             case 'POST':
-//                 if(permission[i].name.toUpperCase() === 'CREATE'){
-//                     next()
-//                     return
-//                 }
-//                 break;
-//             case 'PUT':
-//             case 'PATCH':
-//                 if(permission[i].name.toUpperCase() === 'UPDATE'){
-//                     next()
-//                     return
-//                 }
-//                 break;
-//             case 'DELETE':
-//                 if(permission[i].name.toUpperCase() === 'DELETE'){
-//                     next()
-//                     return
-//                 }
-//                 break;
-//             case 'GET':
-//                 next()
-//                 return;
-//         }
-//     }
-//     res.status(403)
-//     throw new Error("You don't have permission")
-//  })
