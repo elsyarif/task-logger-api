@@ -6,9 +6,12 @@ import { getAllGroup } from "../services/groupServices.js";
 export const getGroups = asyncHandler(async (req, res) => {
   try {
     const currentPage = Number(req.query.page) || 1;
-    const perPage = Number(req.query.page) || 5;
-    
-    const group = await getAllGroup(currentPage, perPage)
+    const perPage = Number(req.query.limit) || 5;
+    let totalItems;
+
+    const count = await Groups.countDocuments();
+    totalItems = count;
+    const group = await getAllGroup(currentPage, perPage);
 
     if (group) {
       res.json({
@@ -61,25 +64,24 @@ export const createGroup = asyncHandler(async (req, res) => {
 
 export const updateGroup = asyncHandler(async (req, res) => {
   try {
-	const id = req.params.id;
-	const {...data} = req.body
-	
-	const group = await Groups.findById(id);
+    const id = req.params.id;
+    const { ...data } = req.body;
 
-	if (!group) {
-		 throw new Error("group not found");
-	}
-	
-  group.name = name || data.name
-  group.description = description || data.description
-  
-  const update = await group.save();
-  
-  res.json({
-	  message: "update group successfully",
-	  data: update
-  })
-	
+    const group = await Groups.findById(id);
+
+    if (!group) {
+      throw new Error("group not found");
+    }
+
+    group.name = name || data.name;
+    group.description = description || data.description;
+
+    const update = await group.save();
+
+    res.json({
+      message: "update group successfully",
+      data: update,
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -92,15 +94,14 @@ export const deleteGroup = asyncHandler(async (req, res) => {
 
     if (!group) {
       throw new Error("group not found");
-    }else{
-      
-		const remove = await Groups.deleteOne(id)
-		
-		res.json({
-			message: "Groups delete successfully",
-			data: remove
-		})
-	}
+    } else {
+      const remove = await Groups.deleteOne(id);
+
+      res.json({
+        message: "Groups delete successfully",
+        data: remove,
+      });
+    }
   } catch (error) {
     throw new Error(error.message);
   }
