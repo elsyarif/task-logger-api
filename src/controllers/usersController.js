@@ -9,7 +9,9 @@ export const userRegister = asyncHandler(async(req, res) => {
 		const salt = await bcrypt.genSalt(10)
         const {...data} = req.body
 		
-		const userExist = await Users.findOne({data.username});
+		let username = data.username
+
+		const userExist = await Users.findOne({username});
 		if (userExist) {
 		  res.status(400);
 		  throw new Error("Username already Exist");
@@ -45,7 +47,7 @@ export const userAuth = asyncHandler(async(req, res) => {
     try {
         const { username, password} = req.body
 		
-		const user = await Users.findOne({username)
+		const user = await Users.findOne({username})
 		if(!user){
 			throw new Error("username not found")
 		}
