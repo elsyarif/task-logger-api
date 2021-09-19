@@ -9,7 +9,9 @@ export const getGroups = asyncHandler(async (req, res) => {
     const perPage = Number(req.query.limit) || 5;
     let totalItems;
 
-    const count = await Groups.countDocuments();
+    const count = await Groups.countDocuments({
+      status: true,
+    });
     totalItems = count;
     const group = await getAllGroup(currentPage, perPage);
 
@@ -32,12 +34,13 @@ export const getGroupById = asyncHandler(async (req, res) => {
     const id = req.params.id;
     const group = await Groups.findById(id);
 
-    if (group) {
-      res.status(200).json({
-        message: "Find group successfully",
-        data: group,
-      });
+    if (!group) {
+      throw new Error("group not found");
     }
+    res.status(200).json({
+      message: "Find group successfully",
+      data: group,
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -46,6 +49,7 @@ export const getGroupById = asyncHandler(async (req, res) => {
 export const createGroup = asyncHandler(async (req, res) => {
   try {
     const { ...data } = req.body;
+
     const group = await Groups.create({
       name: data.name,
       status: data.status,
@@ -87,6 +91,30 @@ export const updateGroup = asyncHandler(async (req, res) => {
   }
 });
 
+export const updateStatusGroup = asyncHandler(async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { ...data } = req.body;
+
+    const group = await Groups.findById(id);
+
+    if (!group) {
+      throw new Error("group not found");
+    }
+
+    group.status = data.status;
+
+    const update = await group.save();
+
+    res.json({
+      message: "update status group successfully",
+      data: update,
+    });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
 export const deleteGroup = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
@@ -95,7 +123,7 @@ export const deleteGroup = asyncHandler(async (req, res) => {
     if (!group) {
       throw new Error("group not found");
     } else {
-      const remove = await Groups.deleteOne(id);
+      const remove = await Groups.deleteOne({ _id: id });
 
       res.json({
         message: "Groups delete successfully",

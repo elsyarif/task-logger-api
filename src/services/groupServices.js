@@ -4,7 +4,9 @@ import Groups from "../models/groupModel.js";
 
 export const getAllGroup = async (currentPage, perPage) => {
   try {
-    const group = await Groups.find()
+    const group = await Groups.find({
+      status: true,
+    })
       .skip((currentPage - 1) * perPage)
       .limit(perPage);
 
