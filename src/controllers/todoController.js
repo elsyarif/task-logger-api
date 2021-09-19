@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 
 import Todos from "../models/todoModel.js";
+import { io } from "../index.js";
 
 export const getTodos = asyncHandler(async (req, res) => {
   try {
@@ -62,6 +63,10 @@ export const createTodo = asyncHandler(async (req, res) => {
       groupId: req.user.groupId,
     });
 
+    // get All todo
+    const todos = await Todos.find();
+    io.emit("todo-add", todos);
+
     if (todo) {
       res.json({
         message: "create Todos Succesfully",
@@ -114,6 +119,11 @@ export const deleteTodo = asyncHandler(async (req, res) => {
     const remove = await Todos.deleteOne({
       _id: id,
     });
+
+    // get All todo
+    const todos = await Todos.find();
+    io.emit("todo-remove", todos);
+
     res.json({
       message: "Delete Todo Succesfully",
       data: remove,
