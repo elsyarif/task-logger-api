@@ -19,11 +19,6 @@ export const getTodos = asyncHandler(async (req, res) => {
       .skip((currentPage - 1) * perPage)
       .limit(perPage);
 
-    // add columen edited for user Group can Edit
-    for (let i = 0; i < todos.length; i++) {
-      todos[i].test = todos.groupId === groupId ? true : false;
-    }
-
     if (todos) {
       res.json({
         message: "Find all todos successfully",
@@ -41,6 +36,16 @@ export const getTodos = asyncHandler(async (req, res) => {
 export const getTodosById = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
+
+    const todo = await Todos.findById(id);
+    if (!todo) {
+      throw new Error("Todo not Found");
+    }
+
+    res.json({
+      message: "Get Todo Succesfully",
+      data: todo,
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -78,18 +83,19 @@ export const updateTodo = asyncHandler(async (req, res) => {
 export const updateStatusTodo = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
+    const { ...data } = req.body;
 
     const todo = await Todos.findById(id);
 
-    if (todo) {
+    if (!todo) {
       throw new Error("Todo not found");
     }
     // set status for done todo set
-    todo.status = true;
+    todo.status = data.status;
     const update = await todo.save();
 
     res.json({
-      message: "",
+      message: "update Todo status Succesfully",
       data: update,
     });
   } catch (error) {
@@ -99,6 +105,19 @@ export const updateStatusTodo = asyncHandler(async (req, res) => {
 
 export const deleteTodo = asyncHandler(async (req, res) => {
   try {
+    const id = req.params.id;
+    const todo = await Todos.findById(id);
+
+    if (!todo) {
+      throw new Error("Todo not found");
+    }
+    const remove = await Todos.deleteOne({
+      _id: id,
+    });
+    res.json({
+      message: "Delete Todo Succesfully",
+      data: remove,
+    });
   } catch (error) {
     throw new Error(error.message);
   }
