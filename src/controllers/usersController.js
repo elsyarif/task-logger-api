@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 import Users from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import { io } from "../index.js";
 
 export const userRegister = asyncHandler(async (req, res) => {
   try {
@@ -24,7 +25,8 @@ export const userRegister = asyncHandler(async (req, res) => {
       status: true,
       groupId: data.groupId,
     });
-
+	// Broadcase user to all user login for new user
+	
     if (users) {
       res.status(201).json({
         message: "Register User Successfully",
@@ -58,6 +60,8 @@ export const userAuth = asyncHandler(async (req, res) => {
 
     const verifyPass = bcrypt.compareSync(password, user.password);
     if (user && verifyPass) {
+	  // broadcash to all user login for user has been login
+	  
       res.json({
         _id: user._id,
         name: user.name,

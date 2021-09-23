@@ -65,6 +65,11 @@ export const createEventTask = asyncHandler(async(req, res) => {
 			status : false,
 			groupId : req.user.groupId,
 		})
+		//get all data
+		const allData = await EventTask.find()
+		// emit to
+		io.emit('eventTask-add', allData)
+		// tampikan dan buat notofiksai ke group user
 		
 		if(event){
 			res.json({
@@ -96,6 +101,12 @@ export const addEventTask = asyncHandler(async(req, res) => {
 		})
 		
 		const task = await event.save()
+		
+		//get all data
+		const allData = await EventTask.find()
+		// emit to
+		io.emit('eventTask_tasks-add', allData.tasks)
+		// tampikan dan buat notofiksai ke group user
 		
 		if(task){
 			res.json({

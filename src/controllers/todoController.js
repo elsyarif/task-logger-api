@@ -66,7 +66,8 @@ export const createTodo = asyncHandler(async (req, res) => {
     // get All todo
     const todos = await Todos.find();
     io.emit("todo-add", todos);
-
+	// tampikan dan buat notofiksai ke group user
+	
     if (todo) {
       res.json({
         message: "create Todos Succesfully",
@@ -98,7 +99,12 @@ export const updateStatusTodo = asyncHandler(async (req, res) => {
     // set status for done todo set
     todo.status = data.status;
     const update = await todo.save();
-
+	
+	// get All todo
+    const todos = await Todos.find();
+    io.emit("todo-update", todos);
+	// tampikan dan buat notofiksai ke group user
+	
     res.json({
       message: "update Todo status Succesfully",
       data: update,
@@ -123,7 +129,8 @@ export const deleteTodo = asyncHandler(async (req, res) => {
     // get All todo
     const todos = await Todos.find();
     io.emit("todo-remove", todos);
-
+	// tampikan dan buat notofiksai ke group user
+	
     res.json({
       message: "Delete Todo Succesfully",
       data: remove,
