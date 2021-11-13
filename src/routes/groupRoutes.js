@@ -8,13 +8,15 @@ import {
   updateStatusGroup,
 } from "../controllers/groupController.js";
 
+import { protect } from "../middleware/authMiddleware.js";
+
 const groupRouter = express.Router();
 
-groupRouter.post("/", createGroup);
+groupRouter.post("/",protect, createGroup);
 groupRouter.get("/", getGroups);
-groupRouter.get("/:id", getGroupById);
-groupRouter.delete("/:id", deleteGroup);
-groupRouter.patch("/:id", updateStatusGroup);
-groupRouter.put("/:id", updateGroup);
+groupRouter.get("/:id",protect, getGroupById);
+groupRouter.delete("/:id", protect, deleteGroup);
+groupRouter.patch("/:id", protect, updateStatusGroup);
+groupRouter.put("/:id", protect, updateGroup);
 
 export default groupRouter;

@@ -152,7 +152,24 @@ export const updateEventTask = asyncHandler(async(req, res) => {
 
 export const updateStatusEventTask = asyncHandler(async(req, res) => {
     try {
-        
+        const id = req.params.id
+		const {...data} = req.body
+		
+		const event = await EventTask.findById(id)
+		
+		if(!event){
+			throw new Error("Event Not Found")
+		}
+				
+		event.status = true
+		const update = await event.save()
+		
+		if(update){
+			res.json({
+				message: "Update Event status succesfully",
+				data: update
+			})
+		}
     } catch (error) {
         throw new Error(error.message);
     }

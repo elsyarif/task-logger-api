@@ -25,8 +25,8 @@ export const userRegister = asyncHandler(async (req, res) => {
       status: true,
       groupId: data.groupId,
     });
-	// Broadcase user to all user login for new user
-	
+    // Broadcase user to all user login for new user
+
     if (users) {
       res.status(201).json({
         message: "Register User Successfully",
@@ -51,7 +51,7 @@ export const userAuth = asyncHandler(async (req, res) => {
 
     const user = await Users.findOne({ username });
     if (!user) {
-      throw new Error("username not found");
+      throw new Error(JSON.stringify({ username: "username not found" }));
     }
 
     if (!user.status) {
@@ -60,8 +60,8 @@ export const userAuth = asyncHandler(async (req, res) => {
 
     const verifyPass = bcrypt.compareSync(password, user.password);
     if (user && verifyPass) {
-	  // broadcash to all user login for user has been login
-	  
+      // broadcash to all user login for user has been login
+
       res.json({
         _id: user._id,
         name: user.name,
@@ -71,7 +71,7 @@ export const userAuth = asyncHandler(async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      throw new Error("Password invalid");
+      throw new Error(JSON.stringify({ password: "password invalid" }));
     }
   } catch (error) {
     throw new Error(error.message);
